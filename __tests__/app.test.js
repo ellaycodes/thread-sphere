@@ -4,6 +4,7 @@ const app = require("../app");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const fs = require("fs");
+const endPoints = require('../endpoints.json');
 
 afterAll(() => {
   db.end();
@@ -20,6 +21,7 @@ describe("GET /api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.topic)).toBe(true);
+        expect(body.topic.length).toBe(3);
         body.topic.forEach((topic) => {
           expect(topic).toEqual({
             slug: expect.any(String),
@@ -40,7 +42,6 @@ describe("GET /api/topics", () => {
 
 describe("GET /api", () => {
   test("GET: 200 - responds with an object describing all the available endpoints on your API ", () => {
-    const endPoints = JSON.parse(fs.readFileSync(`endpoints.json`));
     return request(app)
       .get("/api")
       .expect(200)
