@@ -67,7 +67,7 @@ describe("GET /api/articles/:article_id", () => {
           expect(body.article).toEqual({
             author: expect.any(String),
             title: expect.any(String),
-            article_id: expect.any(Number),
+            article_id: 1,
             body: expect.any(String),
             topic: expect.any(String),
             created_at: expect.any(String),
