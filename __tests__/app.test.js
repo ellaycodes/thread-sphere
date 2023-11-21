@@ -103,7 +103,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(5);
+        expect(body.articles).toHaveLength(13);
         body.articles.forEach((article) => {
           expect(article).toEqual({
             author: expect.any(String),
@@ -125,11 +125,13 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         function calculateExpectedCommentCount(id) {
           if (id === 9 || id === 3 || id === 5) {
-            return '2';
+            return "2";
           } else if (id === 1) {
-            return '11';
+            return "11";
           } else if (id === 6) {
-            return '1';
+            return "1";
+          } else {
+            return "0";
           }
         }
         body.articles.forEach((article) => {
