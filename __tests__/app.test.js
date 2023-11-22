@@ -95,3 +95,119 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("GET /api/articles", () => {
+  test("GET: 200 - responds with an articles array of article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(13);
+        body.articles.forEach((article) => {
+          expect(article).toEqual({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET: 200 - responds with comment_count which is the total count of all the comments with this article_id", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        function calculateExpectedCommentCount(id) {
+          if (id === 9 || id === 3 || id === 5) {
+            return "2";
+          } else if (id === 1) {
+            return "11";
+          } else if (id === 6) {
+            return "1";
+          } else {
+            return "0";
+          }
+        }
+        body.articles.forEach((article) => {
+          const expectedCommentCount = calculateExpectedCommentCount(
+            article.article_id
+          );
+          expect(article.comment_count).toEqual(expectedCommentCount);
+        });
+      });
+  });
+  test("GET: 200 - articles should be sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET: 200 - there should not be a body property present on any of the article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).not.toHaveProperty("body");
+      });
+  });
+  test("GET: 404 - responds with an error message for incorrect or non-existent routes", () => {
+    return request(app)
+      .get("/api/article")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("GET: 200 - responds with an array of comments for the given article_id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.comments)).toBe(true);
+        body.comments.forEach((comment) => {
+          expect(comment).toEqual({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: 1,
+          });
+        });
+      });
+  });
+  test("GET: 200 - Comments should be served with the most recent comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET 200 - Article does not have any comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+  test("GET 404 - Article does not exist", () => {
+    return request(app)
+      .get("/api/articles/200/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Article Not Found");
+      });
+  });
+});
