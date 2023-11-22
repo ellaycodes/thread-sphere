@@ -211,3 +211,52 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+// describe("POST /api/articles/:article_id/comments", () => {
+//   test("POST: 201 - request body accepts an object with a username and body", () => {
+//     const comment = {
+//       username: "puppyprincess05",
+//       body: "too long, got bored half-way through",
+//     };
+
+//     return request(app)
+//       .post("/api/articles/2/comments")
+//       .send(comment)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body.comments).toEqual([
+//           {
+//             username: "puppyprincess05",
+//             body: "too long, got bored half-way through",
+//           },
+//         ]);
+//       });
+//   });
+//   test('POST: 404 - article not found', () => {
+//     const comment = {
+//       username: "puppyprincess06",
+//       body: "that's a lot of words dude",
+//     };
+
+//     return request(app)
+//       .post("/api/articles/200/comments")
+//       .send(comment)
+//       .expect(404)
+//       .then(({ body }) => {
+//         expect(body.msg).toEqual('Article Not Found');
+//       });
+//   });
+//   test('POST: 400 - no comment to post', () => {
+//     const comment = {
+//       username: "puppyprincess06",
+//     };
+
+//     return request(app)
+//       .post("/api/articles/2/comments")
+//       .send(comment)
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body.msg).toEqual('Bad Request');
+//       });
+//   });
+// });
