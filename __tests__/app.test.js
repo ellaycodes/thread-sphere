@@ -322,31 +322,26 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe('DELETE /api/comments/:comment_id', () => {
-  // Successful Deletion
   test('204: Deletes a comment successfully', () => {
     return request(app)
-      .delete('/api/comments/1') // Adjust with a valid comment_id that can be deleted
+      .delete('/api/comments/1')
       .expect(204);
   });
 
-  // Invalid Comment ID Format
   test('400: Invalid comment ID format', () => {
     return request(app)
       .delete('/api/comments/not-a-number')
       .expect(400);
   });
 
-  // Non-existent Comment ID
   test('404: Non-existent comment ID', () => {
     return request(app)
-      .delete('/api/comments/99999') // Use a non-existent ID
+      .delete('/api/comments/99999')
       .expect(404);
   });
-
-  // Deleting Already Deleted Comment
   test('404: Deleting a comment that does not exist', () => {
     return request(app)
-      .delete('/api/comments/19') // Use an ID that was already deleted
+      .delete('/api/comments/19')
       .expect(404);
   });
 });
