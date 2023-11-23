@@ -3,7 +3,7 @@ const db = require("../db/connection");
 exports.checkIfArticleIdExists = (id) => {
   const idCheck = Number(id)
   if (isNaN(idCheck) || idCheck === undefined) {
-    return Promise.reject({ status: 400, msg: "Invalid Article ID" });
+    return Promise.reject({ status: 400, msg: "Bad Request" });
   } else {
     return db
       .query(
@@ -17,7 +17,7 @@ exports.checkIfArticleIdExists = (id) => {
           return Promise.reject({ status: 404, msg: "Article Not Found" });
         }
       });
-  };
+  }};
 
 exports.checkIfCommentIdExists = (id) => {
   const idCheck = Number(id);
