@@ -173,7 +173,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(Array.isArray(body.comments)).toBe(true);
         body.comments.forEach((comment) => {
           expect(comment).toEqual({
@@ -284,5 +283,86 @@ describe("POST /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
       });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH: 200 - Successfully updates votes", () => {
+    const voteUpdate = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.votes).toBe(101);
+      });
+  });
+
+  test("PATCH: 404 - Article not found", () => {
+    const voteUpdate = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/99999")
+      .send(voteUpdate)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article Not Found");
+      });
+  });
+
+  test("PATCH: 400 - Invalid article ID", () => {
+    const voteUpdate = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/notanumber")
+      .send(voteUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("PATCH: 400 - No inc_votes in request body", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("PATCH: 400 - Invalid inc_votes value", () => {
+    const voteUpdate = { inc_votes: "notanumber" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(voteUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('204: Deletes a comment successfully', () => {
+    return request(app)
+      .delete('/api/comments/1')
+      .expect(204);
+  });
+
+  test('400: Invalid comment ID format', () => {
+    return request(app)
+      .delete('/api/comments/not-a-number')
+      .expect(400);
+  });
+
+  test('404: Non-existent comment ID', () => {
+    return request(app)
+      .delete('/api/comments/99999')
+      .expect(404);
+  });
+  test('404: Deleting a comment that does not exist', () => {
+    return request(app)
+      .delete('/api/comments/19')
+      .expect(404);
   });
 });

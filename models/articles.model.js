@@ -59,3 +59,31 @@ exports.insertCommentsByArticleId = (author, body, id) => {
       return rows;
     });
 };
+
+exports.updateArticleByArticle_id = (id, inc_votes) => {
+  if (typeof inc_votes === "string") {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+  return db
+    .query(
+      `UPDATE articles
+  SET votes = votes + $1 
+  WHERE article_id = $2 
+  RETURNING *;`,
+      [inc_votes, id]
+    )
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
+      }
+      return rows[0];
+    });
+};
+
+exports.deleteComment = (id) => {
+  return db.query(
+    `DELETE FROM comments
+    WHERE comment_id = $1;`,
+    [id]
+  );
+}
