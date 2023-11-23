@@ -62,7 +62,7 @@ exports.insertCommentsByArticleId = (author, body, id) => {
 
 exports.updateArticleByArticle_id = (id, inc_votes) => {
   if (typeof inc_votes === "string") {
-    return Promise.reject({ status: 400, msg: "Invalid inc_votes value" });
+    return Promise.reject({ status: 400, msg: "Bad Request" });
   }
   return db
     .query(
