@@ -173,6 +173,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
+        console.log(body);
         expect(Array.isArray(body.comments)).toBe(true);
         body.comments.forEach((comment) => {
           expect(comment).toEqual({
@@ -213,6 +214,72 @@ describe("GET /api/articles/:article_id/comments", () => {
   test("GET 400: Bad Request", () => {
     return request(app)
       .get("/api/articles/banana/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST: 201 - request body accepts an object with a username and body", () => {
+    const testComment = {
+      username: "butter_bridge",
+      body: "too long, got bored half-way through",
+    };
+
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([
+          {
+            comment_id: expect.any(Number),
+            votes: 0,
+            created_at: expect.any(String),
+            author: "butter_bridge",
+            body: "too long, got bored half-way through",
+            article_id: 2,
+          },
+        ]);
+      });
+  });
+  test("POST: 404 - article not found", () => {
+    const comment = {
+      username: "butter_bridge",
+      body: "that's a lot of words dude",
+    };
+
+    return request(app)
+      .post("/api/articles/200/comments")
+      .send(comment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Article Not Found");
+      });
+  });
+  test("POST: 400 - no comment to post", () => {
+    const comment = {
+      username: "butter_bridge",
+    };
+
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(comment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad Request");
+      });
+  });
+  test("POST: 400 - invalid article id format", () => {
+    const comment = {
+      username: "butter_bridge",
+      body: "that's a lot of words dude",
+    };
+    return request(app)
+      .post("/api/articles/notanid/comments")
+      .send(comment)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
