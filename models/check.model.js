@@ -10,7 +10,6 @@ exports.checkIfArticleIdExists = (id) => {
     )
     .then(({ rows }) => {
       if (!rows.length) {
-        console.log(rows.length);
         return Promise.reject({ status: 404, msg: "Article Not Found" });
       }
     });
