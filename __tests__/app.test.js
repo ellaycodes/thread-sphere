@@ -316,7 +316,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(voteUpdate)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid Article ID");
+        expect(body.msg).toBe("Bad Request");
       });
   });
 
@@ -337,7 +337,32 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(voteUpdate)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid inc_votes value");
+        expect(body.msg).toBe("Bad Request");
       });
+  });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('204: Deletes a comment successfully', () => {
+    return request(app)
+      .delete('/api/comments/1')
+      .expect(204);
+  });
+
+  test('400: Invalid comment ID format', () => {
+    return request(app)
+      .delete('/api/comments/not-a-number')
+      .expect(400);
+  });
+
+  test('404: Non-existent comment ID', () => {
+    return request(app)
+      .delete('/api/comments/99999')
+      .expect(404);
+  });
+  test('404: Deleting a comment that does not exist', () => {
+    return request(app)
+      .delete('/api/comments/19')
+      .expect(404);
   });
 });

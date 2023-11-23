@@ -4,9 +4,14 @@ const {
   selectCommentsByArticleId,
   insertCommentsByArticleId,
   updateArticleByArticle_id,
+  deleteComment,
 } = require("../models/articles.model");
 
-const { checkIfArticleIdExists, checkIfBodyExists } = require("../models/check.model");
+const {
+  checkIfArticleIdExists,
+  checkIfBodyExists,
+  checkIfCommentIdExists,
+} = require("../models/check.model");
 
 exports.getAllArticles = (req, res, next) => {
   selectAllArticles()
@@ -75,6 +80,41 @@ exports.patchArticleByArticleId = (req, res, next) => {
     .then((resolvedExistence) => {
       const articles = resolvedExistence[0];
       res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticleByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  const existenceCheck = [updateArticleByArticle_id(article_id, inc_votes)];
+
+  if (article_id) {
+    existenceCheck.push(checkIfArticleIdExists(article_id));
+  }
+
+  Promise.all(existenceCheck)
+    .then((resolvedExistence) => {
+      const articles = resolvedExistence[0];
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  checkIfCommentIdExists(comment_id)
+    .then(() => {
+      return deleteComment(comment_id);
+    })
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);
