@@ -7,6 +7,7 @@ const {
   getArticleById,
   getCommentsByArticleId,
   postCommentsByArticleId,
+  patchArticleByArticleId,
 } = require("./controllers/articles.controller");
 const { handleFourOhFour, customErrors, psqlErrors } = require("./errors");
 
@@ -20,6 +21,7 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
+app.patch("/api/articles/:article_id", patchArticleByArticleId);
 
 app.get("*", handleFourOhFour);
 

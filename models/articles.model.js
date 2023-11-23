@@ -59,3 +59,24 @@ exports.insertCommentsByArticleId = (author, body, id) => {
       return rows;
     });
 };
+
+exports.updateArticleByArticle_id = (id, inc_votes) => {
+  if (typeof inc_votes === "string") {
+    return Promise.reject({ status: 400, msg: "Invalid inc_votes value" });
+  }
+  return db
+    .query(
+      `UPDATE articles
+  SET votes = votes + $1 
+  WHERE article_id = $2 
+  RETURNING *;`,
+      [inc_votes, id]
+    )
+    .then(({ rows }) => {
+      console.log(rows[0]);
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
+      }
+      return rows[0];
+    });
+};

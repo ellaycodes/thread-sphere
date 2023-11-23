@@ -3,9 +3,10 @@ const {
   selectArticleById,
   selectCommentsByArticleId,
   insertCommentsByArticleId,
+  updateArticleByArticle_id,
 } = require("../models/articles.model");
 
-const { checkIfArticleIdExists } = require("../models/check.model");
+const { checkIfArticleIdExists, checkIfBodyExists } = require("../models/check.model");
 
 exports.getAllArticles = (req, res, next) => {
   selectAllArticles()
@@ -53,8 +54,27 @@ exports.postCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   insertCommentsByArticleId(username, body, article_id)
     .then((comments) => {
-      console.log(comments);
       res.status(201).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticleByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  const existenceCheck = [updateArticleByArticle_id(article_id, inc_votes)];
+
+  if (article_id) {
+    existenceCheck.push(checkIfArticleIdExists(article_id));
+  } 
+
+  Promise.all(existenceCheck)
+    .then((resolvedExistence) => {
+      const articles = resolvedExistence[0];
+      res.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);
