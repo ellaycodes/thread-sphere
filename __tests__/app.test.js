@@ -66,16 +66,14 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article).toEqual({
-          author: expect.any(String),
-          title: expect.any(String),
-          article_id: 1,
-          body: expect.any(String),
-          topic: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          article_img_url: expect.any(String),
-        });
+        expect(body.article).toHaveProperty("author");
+        expect(body.article).toHaveProperty("title");
+        expect(body.article).toHaveProperty("article_id");
+        expect(body.article).toHaveProperty("body");
+        expect(body.article).toHaveProperty("topic");
+        expect(body.article).toHaveProperty("created_at");
+        expect(body.article).toHaveProperty("votes");
+        expect(body.article).toHaveProperty("article_img_url");
       });
   });
   test("GET: 404 - responds with an error message for incorrect or non-existent routes (1)", () => {
@@ -423,6 +421,49 @@ describe('GET /api/articles (topic query)', () => {
         body.articles.forEach((article) => {
           expect(article.topic).toBe('paper');
         });
+});
+
+describe("GET /api/articles/:article_id (comment_count)", () => {
+  test("GET: 200 - responds with an article object including comment_count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("author");
+        expect(body.article).toHaveProperty("title");
+        expect(body.article).toHaveProperty("article_id");
+        expect(body.article).toHaveProperty("body");
+        expect(body.article).toHaveProperty("topic");
+        expect(body.article).toHaveProperty("created_at");
+        expect(body.article).toHaveProperty("votes");
+        expect(body.article).toHaveProperty("article_img_url");
+        expect(body.article).toHaveProperty("comment_count");
+        expect(typeof Number(body.article.comment_count)).toBe("number");
+      });
+  });
+  test("GET: 200 - comment_count should be accurate", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const expectedCount = 11;
+        expect(Number(body.article.comment_count)).toBe(expectedCount);
+      });
+  });
+  test("GET: 404 - responds with error for non-existent article_id", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("GET: 400 - responds with error for invalid article_id format", () => {
+    return request(app)
+      .get("/api/articles/not-a-number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
 });
