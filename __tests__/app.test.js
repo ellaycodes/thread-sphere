@@ -414,4 +414,15 @@ describe('GET /api/articles (topic query)', () => {
         expect(body.articles).toBeInstanceOf(Array);
       });
   });
+  test('GET: 200 - returns 200 for topic with no articles', () => {
+    return request(app)
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeInstanceOf(Array);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe('paper');
+        });
+      });
+  });
 });
