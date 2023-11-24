@@ -9,13 +9,22 @@ const {
 
 const {
   checkIfArticleIdExists,
-  checkIfBodyExists,
   checkIfCommentIdExists,
+  checkIfTopicExists
 } = require("../models/check.model");
 
 exports.getAllArticles = (req, res, next) => {
-  selectAllArticles()
-    .then((articles) => {
+  const { topic } = req.query;
+
+  const existenceCheck = [selectAllArticles(topic)];
+
+  if (topic) {
+    existenceCheck.push(checkIfTopicExists(topic));
+  }
+
+  Promise.all(existenceCheck)
+    .then((resolvedExistence) => {
+      const articles = resolvedExistence[0]
       res.status(200).send({ articles });
     })
     .catch((err) => {
@@ -58,15 +67,17 @@ exports.postCommentsByArticleId = (req, res, next) => {
   const { username, body } = req.body;
   const { article_id } = req.params;
 
-  const existenceCheck = [insertCommentsByArticleId(username, body, article_id)];
+  const existenceCheck = [
+    insertCommentsByArticleId(username, body, article_id),
+  ];
 
   if (article_id) {
     existenceCheck.push(checkIfArticleIdExists(article_id));
-  } 
+  }
 
   Promise.all(existenceCheck)
     .then((resolvedExistence) => {
-      const comments = resolvedExistence[0]
+      const comments = resolvedExistence[0];
       res.status(201).send({ comments });
     })
     .catch((err) => {
@@ -82,7 +93,7 @@ exports.patchArticleByArticleId = (req, res, next) => {
 
   if (article_id) {
     existenceCheck.push(checkIfArticleIdExists(article_id));
-  } 
+  }
 
   Promise.all(existenceCheck)
     .then((resolvedExistence) => {

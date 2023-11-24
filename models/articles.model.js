@@ -1,23 +1,59 @@
 const db = require("../db/connection");
 
-exports.selectAllArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.comment_id) AS comment_count
-      FROM articles 
+exports.selectAllArticles = (topic) => {
+  if (typeof topic === "undefined") {
+    return db
+      .query(
+        `SELECT articles.author, articles.title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.comment_id) AS comment_count
+    FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
     GROUP BY articles.author, 
-    articles.title, 
-    articles.article_id, 
-    topic, 
-    articles.created_at, 
-    articles.votes, 
-    article_img_url
-    ORDER BY articles.created_at DESC;`
-    )
+articles.title, 
+articles.article_id, 
+topic, 
+articles.created_at, 
+articles.votes, 
+article_img_url
+ORDER BY articles.created_at DESC;`
+      )
+      .then(({ rows }) => {
+        return rows;
+      });
+  } else {
+    
+  const selectFromDB = `SELECT articles.author, articles.title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.comment_id) AS comment_count
+  FROM articles`;
+
+  const joinDB = `LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  let whereDB;
+  if (topic && topic !== undefined && typeof topic === "string") {
+    whereDB = `WHERE topic = $1 `;
+  } else {
+    whereDB = ``;
+  }
+
+  const groupByDB = `GROUP BY articles.author, 
+articles.title, 
+articles.article_id, 
+topic, 
+articles.created_at, 
+articles.votes, 
+article_img_url`;
+
+  const orderByDB = `ORDER BY articles.created_at DESC`;
+
+  return db
+    .query(`${selectFromDB} ${joinDB} ${whereDB}${groupByDB} ${orderByDB};`, [
+      topic,
+    ])
     .then(({ rows }) => {
       return rows;
+    })
+    .catch((err) => {
+      console.log(err);
     });
+  }
 };
 
 exports.selectArticleById = (article_id) => {
@@ -86,4 +122,4 @@ exports.deleteComment = (id) => {
     WHERE comment_id = $1;`,
     [id]
   );
-}
+};
