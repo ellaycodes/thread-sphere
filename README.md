@@ -2,18 +2,20 @@
 
 ## Introduction
 
-ThreadSphere is a news app that provides tech news to share with others. 
+Welcome to ThreadSphere, a Reddit-inspired API that allows users to interact with a variety of data related to articles, comments, and users. This project demonstrates the use of RESTful API principles to create an accessible and intuitive interface for data manipulation and retrieval.
 
 ## Live Demo
 
-https://thread-sphere.onrender.com/api
+Experience the ThreadSphere API in action: https://thread-sphere.onrender.com/api
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js
-- PostgreSQL 
+As a prerequisite you'll need:
+
+Node.js (minimum version: 14.x)
+PostgreSQL (minimum version: 12.x)
 
 ### Installation
 
@@ -23,6 +25,8 @@ git clone https://github.com/ellaycodes/thread-sphere.git
 cd thread-sphere
 
 2. Install Dependencies
+
+ThreadSphere relies on several Node.js packages including:
 
 npm install dotenv
 npm install express
@@ -34,7 +38,7 @@ npm install pg-format
 
 ### Environment Variables
 
-To run ThreadSphere locally, you need to set up environment variables. Create `.env.development` and `.env.test` files in the root directory with the following content:
+ Create `.env.development` and `.env.test` files in the root directory with the following content:
 
 1.  .env.development
 
@@ -48,15 +52,33 @@ Replace `your_development_database_name_here` and `your_test_database_url_here` 
 
 ### Seed the local database
 
+Populate your database with initial data to start testing and development. 
 npm run seed
 
 ### Running Tests
 
 npm test app.test.js
 
+## Project Structure
+
+ThreadSphere is organized for easy navigation:
+
+/tests - Automated tests for the API endpoints.
+/controllers - Functions that directly interact with the database.
+/db - Database data and seeds to create, seed, and connect the database.
+/models - Database models defining the structure of the database tables.
+
 ## API Documentation
 
-The available endpoints, request methods, and expected responses can be found in the endpoints.json file.
+The available endpoints, request methods, and expected responses can be found by following this link https://thread-sphere.onrender.com/api.
+
+## Contributing 
+
+Interested in contributing? Great! You can start by:
+
+Forking the repository.
+Making your changes.
+Creating a pull request with a detailed description of your additions.
 
 ## Contact
 
