@@ -10,6 +10,7 @@ const {
   patchArticleByArticleId,
   deleteCommentById,
 } = require("./controllers/articles.controller");
+const {getAllUsers} = require('./controllers/users.controller')
 const { handleFourOhFour, customErrors, psqlErrors } = require("./errors");
 
 app.use(express.json());
@@ -24,6 +25,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
 app.patch("/api/articles/:article_id", patchArticleByArticleId);
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get("/api/users", getAllUsers);
 
 app.get("*", handleFourOhFour);
 
