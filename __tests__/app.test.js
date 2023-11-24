@@ -384,43 +384,45 @@ describe("GET /api/users", () => {
   });
 });
 
-describe('GET /api/articles (topic query)', () => {
-  test('GET: 200 - filters articles by the specified topic', () => {
+describe("GET /api/articles (topic query)", () => {
+  test("GET: 200 - filters articles by the specified topic", () => {
     return request(app)
-      .get('/api/articles?topic=cats')
+      .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeInstanceOf(Array);
         body.articles.forEach((article) => {
-          expect(article.topic).toBe('cats');
+          expect(article.topic).toBe("cats");
         });
       });
   });
-  test('GET: 404 - responds with not found for a non-existent topic', () => {
+  test("GET: 404 - responds with not found for a non-existent topic", () => {
     return request(app)
-      .get('/api/articles?topic=unknown')
+      .get("/api/articles?topic=unknown")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+        expect(body.msg).toBe("Not Found");
       });
   });
-  test('GET: 200 - returns all articles when no topic query is provided', () => {
+  test("GET: 200 - returns all articles when no topic query is provided", () => {
     return request(app)
-      .get('/api/articles')
+      .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeInstanceOf(Array);
       });
   });
-  test('GET: 200 - returns 200 for topic with no articles', () => {
+  test("GET: 200 - returns 200 for topic with no articles", () => {
     return request(app)
-      .get('/api/articles?topic=paper')
+      .get("/api/articles?topic=paper")
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeInstanceOf(Array);
         body.articles.forEach((article) => {
-          expect(article.topic).toBe('paper');
+          expect(article.topic).toBe("paper");
         });
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id (comment_count)", () => {
