@@ -10,7 +10,7 @@ const {
   patchArticleByArticleId,
   deleteCommentById,
 } = require("./controllers/articles.controller");
-const {getAllUsers} = require('./controllers/users.controller')
+const { getAllUsers } = require("./controllers/users.controller");
 const { handleFourOhFour, customErrors, psqlErrors } = require("./errors");
 
 app.use(express.json());

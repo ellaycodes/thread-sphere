@@ -1,7 +1,7 @@
 const db = require("../db/connection");
 
 exports.checkIfArticleIdExists = (id) => {
-  const idCheck = Number(id)
+  const idCheck = Number(id);
   if (isNaN(idCheck) || idCheck === undefined) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   } else {
@@ -17,7 +17,8 @@ exports.checkIfArticleIdExists = (id) => {
           return Promise.reject({ status: 404, msg: "Article Not Found" });
         }
       });
-  }};
+  }
+};
 
 exports.checkIfCommentIdExists = (id) => {
   const idCheck = Number(id);
@@ -34,3 +35,14 @@ exports.checkIfCommentIdExists = (id) => {
       });
   }
 };
+
+exports.checkIfTopicExists = (topic) => {
+    return db
+      .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+      .then(({ rows }) => {
+        if (!rows.length) {
+          return Promise.reject({ status: 404, msg: "Not Found" });
+        }
+        return true;
+      });
+  };
