@@ -342,27 +342,46 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-describe('DELETE /api/comments/:comment_id', () => {
-  test('204: Deletes a comment successfully', () => {
-    return request(app)
-      .delete('/api/comments/1')
-      .expect(204);
+describe("DELETE /api/comments/:comment_id", () => {
+  test("DELETE 204: Deletes a comment successfully", () => {
+    return request(app).delete("/api/comments/1").expect(204);
   });
 
-  test('400: Invalid comment ID format', () => {
-    return request(app)
-      .delete('/api/comments/not-a-number')
-      .expect(400);
+  test("DELETE 400: Invalid comment ID format", () => {
+    return request(app).delete("/api/comments/not-a-number").expect(400);
   });
 
-  test('404: Non-existent comment ID', () => {
-    return request(app)
-      .delete('/api/comments/99999')
-      .expect(404);
+  test("DELETE 404: Non-existent comment ID", () => {
+    return request(app).delete("/api/comments/99999").expect(404);
   });
-  test('404: Deleting a comment that does not exist', () => {
+  test("DELETE 404: Deleting a comment that does not exist", () => {
+    return request(app).delete("/api/comments/19").expect(404);
+  });
+});
+
+describe("GET /api/users", () => {
+  test("GET 200: responds with an array of user objects", () => {
     return request(app)
-      .delete('/api/comments/19')
-      .expect(404);
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.users)).toBe(true);
+        expect(body.users.length).toBeGreaterThan(0);
+        body.users.forEach((user) => {
+          expect(user).toEqual({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET 404: responds with a not found error for an invalid path", () => {
+    return request(app)
+      .get("/api/nonexistentEndpoint")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
   });
 });
