@@ -92,6 +92,9 @@ exports.selectCommentsByArticleId = (id) => {
 };
 
 exports.insertCommentsByArticleId = (author, body, id) => {
+  if (typeof body === 'string' && body.length < 1) {
+    return Promise.reject({status: 400, msg: "Bad Request"})
+  }
   return db
     .query(
       `INSERT INTO comments 
