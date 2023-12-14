@@ -14,9 +14,9 @@ const {
 } = require("../models/check.model");
 
 exports.getAllArticles = (req, res, next) => {
-  const { topic } = req.query;
+  const { topic, sort_by, order } = req.query;
 
-  const existenceCheck = [selectAllArticles(topic)];
+  const existenceCheck = [selectAllArticles(topic, sort_by, order)];
 
   if (topic) {
     existenceCheck.push(checkIfTopicExists(topic));
